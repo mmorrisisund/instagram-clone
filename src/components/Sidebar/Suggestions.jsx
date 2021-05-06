@@ -1,25 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useQueryClient } from 'react-query'
 import { Link } from 'react-router-dom'
-import { getUser } from '../../services/db'
 
 import Suggestion from './Suggestion'
 
-const Suggestions = ({ userIds = [] }) => {
-  const [users, setUsers] = useState([])
+const Suggestions = ({ users = [] }) => {
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const userPromises = userIds.map(getUser)
-      const userData = await Promise.all(userPromises)
-
-      setUsers(
-        userData.reduce((users, user) => (user ? [...users, user] : users), [])
-      )
-    }
-    fetchUsers()
-  }, [userIds])
-
-  const handleOnFollow = id => setUsers(users.filter(user => user._id !== id))
+  const handleOnFollow = id => queryClient.invalidateQueries('suggestions')
 
   return (
     <div>

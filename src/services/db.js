@@ -23,23 +23,6 @@ export const getUser = async userId => {
   return null
 }
 
-export const getSuggestions = async username => {
-  const response = await fetch('/api/v1/users/suggestions', {
-    body: JSON.stringify({ username }),
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-  const result = await response.json()
-
-  if (result.status === 'success') {
-    return result.data.users
-  }
-
-  return []
-}
-
 export const followUser = async followerId => {
   const response = await fetch('/api/v1/users/follow', {
     body: JSON.stringify({ followerId }),
@@ -131,17 +114,6 @@ export const uploadImage = async (file, folder, timestamp, signature) => {
   const result = await response.json()
 
   return result.secure_url
-}
-
-export const getRecentPosts = async (limit, page) => {
-  const response = await fetch('/api/v1/posts/recent', {
-    method: 'POST',
-    body: JSON.stringify({ limit, page }),
-    headers: { 'Content-Type': 'application/json' },
-  })
-  const result = await response.json()
-
-  return result.status === 'success' ? result.data.posts : []
 }
 
 export const likePost = async postId => {

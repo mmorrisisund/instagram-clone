@@ -1,28 +1,26 @@
-import { useEffect, useState } from 'react'
-
-import { getRecentPosts } from '../../services/db'
 import StoryBox from './StoryBox'
 import Post from '../Post'
+import useRecentPosts from '../../hooks/useRecentPosts'
 
 const Timeline = () => {
-  const [posts, setPosts] = useState([])
+  const { isError, isLoading, data: posts, error } = useRecentPosts(20, 1)
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const posts = await getRecentPosts(20, 1)
-      setPosts(posts)
-    }
-    fetchPosts()
-  }, [])
+  if (isError) {
+    console.log(error)
+  }
 
   return (
     <div>
       <StoryBox />
-      <div className='mt-8'>
-        {posts.map(post => (
-          <Post key={post._id} post={post} />
-        ))}
-      </div>
+      {isLoading ? (
+        <p>Loading posts...</p>
+      ) : (
+        <div className='mt-8'>
+          {posts.map(post => (
+            <Post key={post._id} post={post} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

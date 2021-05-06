@@ -2,7 +2,7 @@ import { followUser } from '../../services/db'
 
 import Avatar from '../Avatar'
 
-const Suggestion = ({ username, _id }) => {
+const Suggestion = ({ username, avatar, _id }) => {
   return (
     <div className='flex items-center py-2 px-4'>
       <Avatar />

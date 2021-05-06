@@ -2,9 +2,9 @@ import { Redirect, Route } from 'react-router'
 import { useAuth } from '../context/auth'
 
 const ProtectedRoute = props => {
-  const { user, fetching } = useAuth()
+  const { user, loading } = useAuth()
 
-  if (fetching) {
+  if (loading) {
     return <p>route loading...</p>
   }
 

@@ -1,31 +1,22 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext } from 'react'
+import { useHistory } from 'react-router'
+
+import useAuthUser from '../hooks/useUser'
 import { userLogin, userLogout, userSignUp } from '../services/auth'
 
 const AuthContext = createContext({})
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState()
-  const [fetching, setFetching] = useState(true)
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch('/api/v1/auth/user')
-      const { status, data } = await res.json()
-
-      if (status === 'success') {
-        setUser(data.user)
-      }
-      setFetching(false)
-    }
-    fetchUser()
-  }, [])
+  const history = useHistory()
+  const { data: user, isLoading: loading, refresh } = useAuthUser()
 
   const login = async (username, password) => {
     const response = await userLogin(username, password)
     const result = await response.json()
 
     if (result.status === 'success') {
-      setUser(result.data.user)
+      await refresh()
+      history.push('/')
     }
 
     return result
@@ -33,7 +24,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     await userLogout()
-    setUser(undefined)
+    await refresh()
+    history.push('/login')
   }
 
   const signup = async (username, email, fullName, password) => {
@@ -41,14 +33,14 @@ export const AuthProvider = ({ children }) => {
     const result = await response.json()
 
     if (result.status === 'success') {
-      setUser(result.data.user)
+      await refresh()
     }
 
     return result
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup, fetching }}>
+    <AuthContext.Provider value={{ user, login, logout, signup, loading }}>
       {children}
     </AuthContext.Provider>
   )
